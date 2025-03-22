@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key Submission</title>
+    <style>
+        body {
+            background-color: grey;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+        }
+        input {
+            margin: 5px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h2>Enter Your Key and Username</h2>
+    <input type="text" id="key" placeholder="Enter Key">
+    <input type="text" id="username" placeholder="Enter Username">
+    <button onclick="submitForm()">Submit</button>
+    
+    <script>
+        function submitForm() {
+            const key = document.getElementById('key').value;
+            const username = document.getElementById('username').value;
+            
+            if (key === "TEST1") {
+                fetch("https://discord.com/api/webhooks/1352373398424129598/qfEglcOc9g9ua8LMOrAUMqjtyaJ3pmEz4KEpcfJA6VhiNmk3V_IZq-SH70UIWcvz08Lf", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        embeds: [{
+                            title: "New Submission",
+                            fields: [
+                                { name: "Key", value: key, inline: true },
+                                { name: "Username", value: username, inline: true }
+                            ],
+                            color: 5814783
+                        }]
+                    })
+                }).then(response => {
+                    if (response.ok) {
+                        alert("Submitted successfully!");
+                    } else {
+                        alert("Failed to send.");
+                    }
+                }).catch(error => {
+                    alert("Error: " + error);
+                });
+            } else {
+                alert("Invalid key!");
+            }
+        }
+    </script>
+</body>
+</html>
