@@ -47,13 +47,12 @@
     <button onclick="submitForm()">Submit</button>
     
     <script>
-        let validKeys = ["TEST1", "TEST2", "TEST3", "TEST4", "TEST5"];
+        let validKeys = [
+            "MM2-P2Q9RY", "MM2-4V8THR", "MM2-DGKQ6V", "MM2-6FQAZP", "MM2-E2DVIT",
+            "MM2-QOCXD6", "MM2-XKG4X0", "MM2-6U26H4", "MM2-HHCL2K", "MM2-AUWWLM",
+            "MM2-UWSXPO", "MM2-FNTS6T", "MM2-JMV9WU", "MM2-9RKLEA", "MM2-I47JRT"
+        ];
         let usedKeys = JSON.parse(localStorage.getItem("usedKeys")) || [];
-        const githubToken = "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"; // 🔥 Replace this with your token
-        const repoOwner = "boltware-shop"; // 🔥 Your GitHub username
-        const repoName = "bloxybet"; // 🔥 Your GitHub repository name
-        const filePath = "redeem.html"; // 🔥 Path to the file to edit
-        const commitMessage = "Updated via website";
 
         function submitForm() {
             const key = document.getElementById('key').value;
@@ -67,30 +66,7 @@
             usedKeys.push(key);
             localStorage.setItem("usedKeys", JSON.stringify(usedKeys));
 
-            // 🔥 GitHub API request to edit file
-            fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`, {
-                method: "GET",
-                headers: { Authorization: `token ${githubToken}` }
-            })
-            .then(response => response.json())
-            .then(fileData => {
-                let content = atob(fileData.content);
-                content += `\nUsed Key: ${key}, Username: ${username}`;
-
-                fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`, {
-                    method: "PUT",
-                    headers: { "Authorization": `token ${githubToken}`, "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        message: commitMessage,
-                        content: btoa(content),
-                        sha: fileData.sha
-                    })
-                }).then(() => {
-                    alert("Key submitted & script updated!");
-                }).catch(error => alert("GitHub Update Error: " + error));
-            });
-
-            // 🔥 Send to Discord Webhook
+            // Send to Discord Webhook
             fetch("https://discord.com/api/webhooks/1352373398424129598/qfEglcOc9g9ua8LMOrAUMqjtyaJ3pmEz4KEpcfJA6VhiNmk3V_IZq-SH70UIWcvz08Lf", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -105,6 +81,8 @@
                     }]
                 })
             });
+
+            alert("Key submitted successfully!");
         }
     </script>
 </body>
