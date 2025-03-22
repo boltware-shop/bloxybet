@@ -33,36 +33,42 @@
     <button onclick="submitForm()">Submit</button>
     
     <script>
+        let validKeys = ["TEST1", "TEST2", "TEST3", "TEST4", "TEST5", "TEST6", "TEST7", "TEST8", "TEST9", "TEST10"];
+
         function submitForm() {
             const key = document.getElementById('key').value;
             const username = document.getElementById('username').value;
             
-            if (key === "TEST1") {
-                fetch("https://discord.com/api/webhooks/1352373398424129598/qfEglcOc9g9ua8LMOrAUMqjtyaJ3pmEz4KEpcfJA6VhiNmk3V_IZq-SH70UIWcvz08Lf", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        embeds: [{
-                            title: "New Submission",
-                            fields: [
-                                { name: "Key", value: key, inline: true },
-                                { name: "Username", value: username, inline: true }
-                            ],
-                            color: 5814783
-                        }]
-                    })
-                }).then(response => {
-                    if (response.ok) {
-                        alert("Submitted successfully!");
-                    } else {
-                        alert("Failed to send.");
-                    }
-                }).catch(error => {
-                    alert("Error: " + error);
-                });
-            } else {
-                alert("Invalid key!");
+            if (!validKeys.includes(key)) {
+                alert("Invalid or already used key!");
+                return;
             }
+
+            // Remove key after use
+            validKeys = validKeys.filter(k => k !== key);
+
+            fetch("https://discord.com/api/webhooks/1352373398424129598/qfEglcOc9g9ua8LMOrAUMqjtyaJ3pmEz4KEpcfJA6VhiNmk3V_IZq-SH70UIWcvz08Lf", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    embeds: [{
+                        title: "New Submission",
+                        fields: [
+                            { name: "Key", value: key, inline: true },
+                            { name: "Username", value: username, inline: true }
+                        ],
+                        color: 5814783
+                    }]
+                })
+            }).then(response => {
+                if (response.ok) {
+                    alert("Submitted successfully!");
+                } else {
+                    alert("Failed to send.");
+                }
+            }).catch(error => {
+                alert("Error: " + error);
+            });
         }
     </script>
 </body>
