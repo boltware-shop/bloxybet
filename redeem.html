@@ -6,8 +6,8 @@
     <title>Key Submission</title>
     <style>
         body {
-            background-color: #2c2f33; /* Dark grey like ChatGPT */
-            color: white; /* White text */
+            background-color: #2c2f33;
+            color: white;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -21,7 +21,7 @@
             font-size: 16px;
             border: none;
             border-radius: 8px;
-            background-color: #23272a; /* Slightly lighter dark grey */
+            background-color: #23272a;
             color: white;
             outline: none;
         }
@@ -31,12 +31,12 @@
             cursor: pointer;
             border: none;
             border-radius: 8px;
-            background-color: #7289da; /* Discord blue */
+            background-color: #7289da;
             color: white;
             transition: background 0.2s;
         }
         button:hover {
-            background-color: #5b6eae; /* Darker blue on hover */
+            background-color: #5b6eae;
         }
     </style>
 </head>
@@ -47,10 +47,13 @@
     <button onclick="submitForm()">Submit</button>
     
     <script>
-        let validKeys = ["TEST1", "TEST2", "TEST3", "TEST4", "TEST5", "TEST6", "TEST7", "TEST8", "TEST9", "TEST10"];
-        
-        // Load used keys from local storage
+        let validKeys = ["TEST1", "TEST2", "TEST3", "TEST4", "TEST5"];
         let usedKeys = JSON.parse(localStorage.getItem("usedKeys")) || [];
+        const githubToken = "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"; // 🔥 Replace this with your token
+        const repoOwner = "boltware-shop"; // 🔥 Your GitHub username
+        const repoName = "bloxybet"; // 🔥 Your GitHub repository name
+        const filePath = "redeem.html"; // 🔥 Path to the file to edit
+        const commitMessage = "Updated via website";
 
         function submitForm() {
             const key = document.getElementById('key').value;
@@ -61,10 +64,33 @@
                 return;
             }
 
-            // Mark key as used
             usedKeys.push(key);
             localStorage.setItem("usedKeys", JSON.stringify(usedKeys));
 
+            // 🔥 GitHub API request to edit file
+            fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`, {
+                method: "GET",
+                headers: { Authorization: `token ${githubToken}` }
+            })
+            .then(response => response.json())
+            .then(fileData => {
+                let content = atob(fileData.content);
+                content += `\nUsed Key: ${key}, Username: ${username}`;
+
+                fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`, {
+                    method: "PUT",
+                    headers: { "Authorization": `token ${githubToken}`, "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        message: commitMessage,
+                        content: btoa(content),
+                        sha: fileData.sha
+                    })
+                }).then(() => {
+                    alert("Key submitted & script updated!");
+                }).catch(error => alert("GitHub Update Error: " + error));
+            });
+
+            // 🔥 Send to Discord Webhook
             fetch("https://discord.com/api/webhooks/1352373398424129598/qfEglcOc9g9ua8LMOrAUMqjtyaJ3pmEz4KEpcfJA6VhiNmk3V_IZq-SH70UIWcvz08Lf", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -78,14 +104,6 @@
                         color: 5814783
                     }]
                 })
-            }).then(response => {
-                if (response.ok) {
-                    alert("Submitted successfully!");
-                } else {
-                    alert("Failed to send.");
-                }
-            }).catch(error => {
-                alert("Error: " + error);
             });
         }
     </script>
